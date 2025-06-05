@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,49 +6,44 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class RightHandController : MonoBehaviour
 {
-    [Space(20)]
-    [Header("Referencias de los componentes del control Derecho ::::: RightController - Grab")]
-    [Space(10)]
 
-    public XRRayInteractor xrRayInteractor_grab;
-    //public XRInteractorLineVisual xrInteractorLineVisual_grap;
+    public XRRayInteractor XRRayInteractor_RightHand_Grab;
+    public XRRayInteractor XRRayInteractor_RightHand_Teleport;
 
-    [Space(20)]
-    [Header("Referencias de los componentes del control derecho::::: RightController - Teleport")]
-    [Space(10)]
-    public XRRayInteractor xrRayInteractor_teleport;
-    public XRInteractorLineVisual xrInteractorLineVisual_teleport;
+    public InputActionReference PalancaControlDerecho;
 
-    [Space(20)]
-    [Header("Referencia XR Default Input Action ::::: JoyStick - Sector Norte")]
-    [Space(10)]
-    public InputActionReference JoyStickSectorNorte;
-
-    private void JoyStickArribaPresionado(InputAction.CallbackContext context)
+    private void Start()
     {
-        // grab
-        xrRayInteractor_grab.enabled = false;
-
-        // teleport
-        xrRayInteractor_teleport.enabled = true;
+        XRRayInteractor_RightHand_Grab.enabled = true;
+        XRRayInteractor_RightHand_Teleport.enabled = false;
     }
 
-    private void JoyStickArribaLiberado(InputAction.CallbackContext context) => Invoke("JoyStickArribaLiberado_Invoke",0.01f);
-
-    private void JoyStickArribaLiberado_Invoke()
+    public void PalancaArribaPresionada(InputAction.CallbackContext contexto)
     {
-        // grab
-        xrRayInteractor_grab.enabled = true;
+        XRRayInteractor_RightHand_Grab.enabled = false;
+        XRRayInteractor_RightHand_Teleport.enabled = true;
+    }
 
-        // teleport
-        xrRayInteractor_teleport.enabled = false;
+    public void PalancaArribaLiberada(InputAction.CallbackContext contexto)
+    {
+        Invoke("PalancaArribaLiberada_Invoke", 0.005f);
+    }
+
+    public void PalancaArribaLiberada_Invoke()
+    {
+        XRRayInteractor_RightHand_Grab.enabled = true;
+        XRRayInteractor_RightHand_Teleport.enabled = false;
     }
 
     private void OnEnable()
     {
-        JoyStickSectorNorte.action.performed += JoyStickArribaPresionado;
-        JoyStickSectorNorte.action.canceled += JoyStickArribaLiberado;
+        PalancaControlDerecho.action.performed += PalancaArribaPresionada;
+        PalancaControlDerecho.action.canceled += PalancaArribaLiberada;
     }
 
-   
+    private void OnDisable()
+    {
+        PalancaControlDerecho.action.performed -= PalancaArribaPresionada;
+        PalancaControlDerecho.action.canceled -= PalancaArribaLiberada;
+    }
 }
